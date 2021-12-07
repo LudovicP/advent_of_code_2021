@@ -41,31 +41,34 @@ namespace AdventOfCode.Day1
 
         public string GetPart2Result()
         {
-            List<int> fishes = File.ReadAllText($"./{GetType().Name}/Inputs/Example.txt").Split(',').Select(x => int.Parse(x)).ToList();
+            List<int> fishes = File.ReadAllText($"./{GetType().Name}/Inputs/Input1.txt").Split(',').Select(x => int.Parse(x)).ToList();
 
-            for (int i = 0; i < 256; i++)
+            int days = 256;
+            var groupFishes = new Dictionary<long, long>();
+            for (int i = 0; i <= 8; i++)
             {
-                int fishesToAdd = 0;
-                for (int j = 0; j < fishes.Count(); j++)
+                groupFishes.Add(i, fishes.Count(x => x == i));
+            }
+
+            for (int i = 0; i < days; i++)
+            {
+                var fishesCopy = new Dictionary<long, long>(groupFishes);
+                for (int j = 8; j >= 0; j--)
                 {
-                    if (fishes[j] == 0)
+                    if (j == 0)
                     {
-                        fishesToAdd++;
-                        fishes[j] = 6;
+                        fishesCopy[8] = groupFishes[j];
+                        fishesCopy[6] += groupFishes[j];
                     }
                     else
                     {
-                        fishes[j]--;
+                        fishesCopy[j - 1] = groupFishes[j];
                     }
                 }
 
-                for (int j = 0; j < fishesToAdd; j++)
-                {
-                    fishes.Add(8);
-                }
+                groupFishes = fishesCopy;
             }
-
-            return fishes.Count().ToString();
+            return groupFishes.Sum(x => x.Value).ToString();
         }
     }
 }
